@@ -37,7 +37,7 @@ class Conference(db.Model):
     description = db.Column(db.Text, nullable=True)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    talks = db.relationship('Talk', cascade="all,delete", backref='conferences', lazy=True)
+    talks = db.relationship('Talk', cascade="all,delete", backref='talks', lazy=True)
     creation_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
     def __init__(self, title, description, start_date, end_date, talks):
@@ -56,9 +56,9 @@ class Talk(db.Model):
     duration_min = db.Column(db.Integer, nullable=False)
     scheduled_at = db.Column(db.DateTime, nullable=False)
     speakers = db.relationship('User', cascade="all,delete", secondary=speakers, lazy='subquery',
-        backref=db.backref('talks', lazy=True))
+        backref=db.backref('speakers', lazy=True))
     participants = db.relationship('User', cascade="all,delete", secondary=participants, lazy='subquery',
-        backref=db.backref('talks', lazy=True))
+        backref=db.backref('participants', lazy=True))
     creation_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
     def __init__(self, title, description, duration_min, scheduled_at, speakers, participants):
@@ -77,6 +77,7 @@ class UserSchema(ma.Schema):
 class ConferenceSchema(ma.Schema):
     id = fields.Integer()
     title = fields.String(required=True)
+    description = fields.String(required=False)
     start_date = fields.Date(required=True)
     end_date = fields.Date(required=True)
 
@@ -84,5 +85,6 @@ class TalkSchema(ma.Schema):
     id = fields.Integer()
     conference_id = fields.Integer()
     title = fields.String(required=True)
+    description = fields.String(required=False)
     duration_min = fields.Integer(required=True)
     scheduled_at = fields.Date(required=True)
