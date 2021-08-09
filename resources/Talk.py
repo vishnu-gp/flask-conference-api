@@ -18,7 +18,7 @@ class TalkResource(Resource):
             error_response['message'] = 'No conference id passed.'
 
             return error_response, 400
-        conference = db.session.query(Conference).filter_by(id=conference_id).first()
+        conference = Conference.query.filter_by(id=conference_id).first()
         if not conference:
             error_response['message'] = 'Conference does not exist.'
 
@@ -27,3 +27,76 @@ class TalkResource(Resource):
         response['data'] = talks
 
         return response, 200
+
+    # To add a talk
+    def post(self):
+        input_data = request.get_data()
+        if not input_data:
+            error_response['message'] = 'No input data'
+
+            return error_response, 400
+        try:
+            data = talk_schema.loads(input_data)
+
+            conference = Conference.query.filter_by(id=data['conference_id']).first()
+            if not conference:
+                error_response['message'] = 'Conference does not exist.'
+
+                return error_response, 400
+            talk = Talk(
+                title=data['title'],
+                description=data['description'] if 'description' in data else None,
+                scheduled_at=data['scheduled_at'],
+                duration_min=data['duration_min'],
+                speakers=[],
+                participants=[]
+            )
+            talk.conference_id = conference.id
+            db.session.add(talk)
+            db.session.commit()
+            response['data'] = talk_schema.dump(talk)
+
+            return response, 201
+        except ValidationError as err:
+            error_response['errors'] = err.messages
+
+            return error_response, 400
+        except:
+            return error_response, 400
+    
+    # To edit a talk
+    def patch(self):
+        input_data = request.get_data()
+        if not input_data:
+            error_response['message'] = 'No input data.'
+
+            return error_response, 400
+        try:
+            data = talk_schema.loads(input_data, partial=True)
+            if(not 'id' in data):
+                error_response['message'] = 'No talk id passed.'
+
+                return error_response, 400
+            talk = Talk.query.filter_by(id=data['id']).first()
+            if not talk:
+                error_response['message'] = 'Talk does not exist.'
+
+                return error_response, 400
+            if('conference_id' in data):
+                conference = Conference.query.filter_by(id=data['conference_id']).first()
+                if not conference:
+                    error_response['message'] = 'Conference does not exist.'
+
+                    return error_response, 400
+            for key in data:
+                setattr(talk, key, data[key])
+            db.session.commit()
+            response['data'] = talk_schema.dump(talk)
+
+            return response, 201
+        except ValidationError as err:
+            error_response['errors'] = err.messages
+
+            return error_response, 400
+        except:
+            return error_response, 400

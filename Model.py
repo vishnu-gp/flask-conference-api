@@ -87,6 +87,6 @@ class TalkSchema(ma.Schema):
     title = fields.String(required=True)
     description = fields.String(required=False)
     duration_min = fields.Integer(required=True)
-    scheduled_at = fields.Date(required=True)
+    scheduled_at = fields.DateTime(required=True)
     speakers = fields.List(fields.Nested("UserSchema"))
     participants = fields.List(fields.Nested("UserSchema"))
