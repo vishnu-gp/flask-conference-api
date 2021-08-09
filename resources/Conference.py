@@ -40,6 +40,8 @@ class ConferenceResource(Resource):
             return response, 201
         except ValidationError as err:
             error_response['errors'] = err.messages
+
+            return error_response, 400
         except:
             return error_response, 400
 
@@ -59,7 +61,7 @@ class ConferenceResource(Resource):
             conference = Conference.query.filter_by(id=data['id']).first()
             if not conference:
                 error_response['message'] = 'Conference does not exist.'
-                
+
                 return error_response, 400
             for key in data:
                 setattr(conference, key, data[key])
@@ -70,4 +72,6 @@ class ConferenceResource(Resource):
         except ValidationError as err:
             error_response['errors'] = err.messages
 
+            return error_response, 400
+        except:
             return error_response, 400
