@@ -1,0 +1,10 @@
+flask==2.0.1
+flask_restful==0.3.9
+flask_script==2.0.6
+flask_migrate==3.1.0
+marshmallow==3.13.0
+flask_sqlalchemy==2.5.1
+flask_marshmallow==0.14.0
+marshmallow-sqlalchemy==0.26.1
+python-dotenv==0.19.0
+mysqlclient=2.0.3
