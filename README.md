@@ -21,3 +21,10 @@ Run the application
 ```
 python run.py
 ```
+
+## Running Automated Tests
+```
+pytest --disable-pytest-warnings
+```
+## Successful Test Result Sample
+<img src="https://res.cloudinary.com/vannucherum/image/upload/v1628600404/github/result.png">
